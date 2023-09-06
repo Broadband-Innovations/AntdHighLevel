@@ -1,0 +1,28 @@
+# Node.js dependencies
+node_modules/
+
+# TypeScript build output
+dist/
+
+# Debug log
+npm-debug.log
+yarn-error.log
+
+# Environment variables
+.env
+
+# IDE files
+.idea/
+.vscode/
+
+# Operating System Files
+.DS_Store
+Thumbs.db
+
+# Other common files and directories to ignore
+*.log
+*.swp
+*.swo
+*.bak
+*.tmp
+*.temp
