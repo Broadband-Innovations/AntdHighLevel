@@ -44,7 +44,7 @@ export interface EditableTableProps {
   useExternalDndContext?: boolean;
   rowStyles?: Record<string, CSSProperties>; // Added this for custom row styles
 
-  align?: 'left' | 'center' | 'right'; // align prop can only have these values
+  align?: "left" | "center" | "right"; // align prop can only have these values
 }
 
 export const EditableTable: React.FC<EditableTableProps> = ({
@@ -59,13 +59,13 @@ export const EditableTable: React.FC<EditableTableProps> = ({
   align = "left",
   useExternalDndContext = false, // default value as false
   rowStyles = {}, // default value as an empty object
-
-
 }) => {
   const [editingKey, setEditingKey] = useState("");
   const [currentRow, setCurrentRow] = useState<TableData | null>(null);
-  const [selectedRowKeys, setSelectedRowKeys] = useState<(string | number)[]>([]);
-  const buttonStyle: CSSProperties = { margin: 11, textAlign: align || 'left' };
+  const [selectedRowKeys, setSelectedRowKeys] = useState<(string | number)[]>(
+    []
+  );
+  const buttonStyle: CSSProperties = { margin: 11, textAlign: align || "left" };
 
   const isEditing = (record: TableData) => record.key === editingKey;
 
@@ -194,25 +194,24 @@ export const EditableTable: React.FC<EditableTableProps> = ({
           />
         </Space>
       ) : (
-        
-          <Space size="middle">
-         {editable &&   <EditOutlined
+        <Space size="middle">
+          {editable && (
+            <EditOutlined
               onClick={() => edit(record)}
               style={{ cursor: "pointer" }}
-            /> }
-            <Popconfirm
-              title="Sure to delete?"
-              onConfirm={() => {
-                const newData = data.filter((item) => item.key !== record.key);
-                setData(newData);
-              }}
-            >
-              <DeleteOutlined style={{ color: "red", cursor: "pointer" }} />
-            </Popconfirm>
-          </Space>
-       
+            />
+          )}
+          <Popconfirm
+            title="Sure to delete?"
+            onConfirm={() => {
+              const newData = data.filter((item) => item.key !== record.key);
+              setData(newData);
+            }}
+          >
+            <DeleteOutlined style={{ color: "red", cursor: "pointer" }} />
+          </Popconfirm>
+        </Space>
       );
-      
     },
   });
   const rowClassName = (record: TableData, index: number) => {
@@ -222,16 +221,14 @@ export const EditableTable: React.FC<EditableTableProps> = ({
     return "";
   };
 
-
   const DndComponent: React.FC = ({ children }) => {
     return useExternalDndContext ? (
       <SortableContext
-      items={data.map((record) => record.key)}
-      strategy={verticalListSortingStrategy}
-    >
-    {children}
+        items={data.map((record) => record.key)}
+        strategy={verticalListSortingStrategy}
+      >
+        {children}
       </SortableContext>
-
     ) : (
       <DndContext onDragEnd={onDragEnd}>
         <SortableContext
@@ -254,11 +251,19 @@ export const EditableTable: React.FC<EditableTableProps> = ({
         rowClassName={rowClassName}
         components={{
           body: {
-            row: (rowProps: JSX.IntrinsicAttributes & DraggableRowProps & { children?: React.ReactNode; }) => <DraggableRow {...rowProps} rowStyles={rowStyles} dataRowKey={rowProps["data-row-key"]} />, // pass rowStyles and dataRowKey
+            row: (
+              rowProps: JSX.IntrinsicAttributes &
+                DraggableRowProps & { children?: React.ReactNode }
+            ) => (
+              <DraggableRow
+                {...rowProps}
+                rowStyles={rowStyles}
+                dataRowKey={rowProps["data-row-key"]}
+              />
+            ), // pass rowStyles and dataRowKey
             cell: EditableCell,
           },
         }}
-        
       />
       {selectedRowKeys.length > 0 && (
         <React.Fragment>
@@ -289,7 +294,6 @@ export const EditableTable: React.FC<EditableTableProps> = ({
       )}
     </DndComponent>
   );
-  
 };
 
 export default EditableTable;

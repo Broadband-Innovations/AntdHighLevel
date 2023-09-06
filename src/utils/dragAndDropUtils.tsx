@@ -14,7 +14,15 @@ export interface DraggableRowProps {
 }
 
 export const DraggableRow: React.FC<DraggableRowProps> = (props) => {
-  const { index, moveRow, className, style, rowStyles, dataRowKey, ...restProps } = props;
+  const {
+    index,
+    moveRow,
+    className,
+    style,
+    rowStyles,
+    dataRowKey,
+    ...restProps
+  } = props;
 
   const {
     attributes,
@@ -33,7 +41,9 @@ export const DraggableRow: React.FC<DraggableRowProps> = (props) => {
   const draggableStyle: CSSProperties = {
     ...style,
     ...customRowStyles, // Merge custom row styles
-    transform: CSS.Transform.toString(transform && { ...transform, scaleY: 1 })?.replace(/translate3d\(([^,]+),/, "translate3d(0,"),
+    transform: CSS.Transform.toString(
+      transform && { ...transform, scaleY: 1 }
+    )?.replace(/translate3d\(([^,]+),/, "translate3d(0,"),
     transition,
     ...(isDragging ? { position: "relative", zIndex: 9999 } : {}),
   };
