@@ -30,6 +30,8 @@ export interface Column {
   dataIndex: string;
   title: string;
   inputType?: "text" | "textArea";
+  width?: number | string;
+  render?: (value: any, record: TableData) => React.ReactNode;
 }
 
 export interface EditableTableProps {
@@ -43,7 +45,6 @@ export interface EditableTableProps {
   deleteSoftConfirm?: boolean;
   useExternalDndContext?: boolean;
   rowStyles?: Record<string, CSSProperties>; // Added this for custom row styles
-
   align?: "left" | "center" | "right"; // align prop can only have these values
 }
 
@@ -141,8 +142,14 @@ export const EditableTable: React.FC<EditableTableProps> = ({
   let tableColumns: ColumnsType<TableData> = columns.map((column) => ({
     title: column.title,
     dataIndex: column.dataIndex,
-    render: (text: string, record: TableData) =>
-      isEditing(record) ? (
+    width: column.width,
+    render: (text: string, record: TableData) => {
+      // Check if a custom render function is provided
+      if (column.render) {
+        return column.render(text, record);
+      }
+      // If no custom render, proceed as usual
+      return isEditing(record) ? (
         column.inputType === "textArea" ? (
           <TextArea
             defaultValue={text}
@@ -160,8 +167,10 @@ export const EditableTable: React.FC<EditableTableProps> = ({
         )
       ) : (
         text
-      ),
+      );
+    },
   }));
+  
 
   if (draggable) {
     tableColumns = [
