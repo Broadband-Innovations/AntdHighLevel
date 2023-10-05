@@ -1,6 +1,6 @@
 {
   "name": "antd-high-level",
-  "version": "1.0.25",
+  "version": "1.0.26",
   "description": "A high-level Next.js component library including editable, draggable tables, headers and more. This library is opinionated and will evolve over time with more features.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
