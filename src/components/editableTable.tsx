@@ -15,10 +15,10 @@
     SortableContext,
     verticalListSortingStrategy,
   } from "@dnd-kit/sortable";
-  import { DndContext, DragEndEvent } from "@dnd-kit/core";
+  import { DndContext, DndContextProps, DragEndEvent } from "@dnd-kit/core";
   import { DraggableRow, DraggableRowProps } from "../utils/dragAndDropUtils";
   import { EditableCell } from "../utils/editableCell";
-
+  import { v4 as uuidv4 } from 'uuid';
   const { TextArea } = Input;
 
   export interface TableData {
@@ -45,7 +45,9 @@
     multiDelete?: boolean;
     deleteSoftConfirm?: boolean;
     useExternalDndContext?: boolean;
-    rowStyles?: Record<string, CSSProperties>; 
+    dndContextProps?: DndContextProps;
+    rowStyles?: Record<string, CSSProperties>;
+    keyType?: 'int' | 'uuid'; 
     align?: "left" | "center" | "right"; // align prop can only have these values
   }
 
@@ -60,7 +62,9 @@
     multiDelete = true,
     deleteSoftConfirm = true,
     align = "left",
+    keyType = 'int',
     useExternalDndContext = false, // default value as false
+    dndContextProps ={},
     rowStyles = {}, // default value as an empty object
   }) => {
     const [editingKey, setEditingKey] = useState("");
@@ -72,19 +76,27 @@
 
     const isEditing = (record: TableData) => record.key === editingKey;
 
-    const handleAddRow = () => {
-      let cur = data.map(({ key }) => parseInt(key));
-      const newRow: TableData = {
-        key: (Math.max(...cur, 0) + 1).toString(),
-      };
-
-      for (let column of columns) {
-        newRow[column.dataIndex] = "";
+    const generateKey = () => {
+      if (keyType === 'uuid') {
+        return uuidv4();
       }
-
-      setData([...data, newRow]);
-      setEditingKey(newRow.key);
+      // Generate an integer key
+      let maxKey = Math.max(...data.map(item => parseInt(item.key, 10)), 0);
+      return (maxKey + 1).toString();
     };
+  
+    const handleAddRow = () => {
+      const newRowKey = generateKey();
+      const newRow: TableData = { key: newRowKey };
+  
+      for (let column of columns) {
+        newRow[column.dataIndex] = '';
+      }
+  
+      setData([...data, newRow]);
+      setEditingKey(newRowKey);
+    };
+  
 
     const cancel = (key: string) => {
       if (!currentRow) {
@@ -243,7 +255,7 @@
           {children}
         </SortableContext>
       ) : (
-        <DndContext onDragEnd={onDragEnd}>
+        <DndContext onDragEnd={onDragEnd} {...dndContextProps}>
           <SortableContext
             items={data.map((record) => record.key)}
             strategy={verticalListSortingStrategy}
